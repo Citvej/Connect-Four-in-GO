@@ -1,0 +1,24 @@
+#table td{
+    height: 30px;
+    width: 30px;
+    border: 1px solid goldenrod;
+    border-radius: 50%;
+}
+
+#vstaviZeton{
+    border-radius: 0%;
+    background: brown;
+    border: 0px transparent;
+}
+
+.red{
+    background: #ee1111;
+}
+
+.yellow{
+    background: #ffc40d;
+}
+
+#table {
+
+}

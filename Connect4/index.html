@@ -1,0 +1,137 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+    <script src="wasm_exec.js"></script>
+    <script>
+    	async function init() {
+			const go = new Go();
+			let result = await WebAssembly.instantiateStreaming(
+			fetch("main.wasm"),
+			go.importObject
+			);
+			// let mod = result. module;
+			go.run(result.instance);
+
+			printMessage("test1");
+			printMessage("test2");
+			printMessage("test3");
+
+			document.querySelector("#runButton").disabled = false;
+		}
+
+		$(document).ready(function(){
+			clicked = "";
+			var barva = "red";	  
+			naVrsti = true;
+			matrika = [
+			[ "", "", "", "", "", "", "" ],
+			[ "", "", "", "", "", "", "" ],
+			[ "", "", "", "", "", "", "" ],
+			[ "", "", "", "", "", "", "" ],
+			[ "", "", "", "", "", "", "" ],
+			[ "", "", "", "", "", "", "" ],
+			];
+			
+			$(".vstavi").click( function() {
+				clicked = $(this).attr('id');
+				clicked = parseInt(clicked, 10); //kliknjen id stolpca pretvorimo v int
+				spustiZeton(clicked, matrika);
+			});
+		});
+
+		function posljiMatriko(matrika){
+			for(var i = 0; i<6; i++){
+				for(var j = 0; j<7; j++){
+					pridobiElementEnegaPoEnega(matrika[i][j], i, j);
+				}
+			}
+		}
+
+		function spustiZeton(pos, matrika){
+			for(var i=0; i<6; i++){
+				if(matrika[i][pos] != ""){
+					try{
+						barva = pobarvaj(i, pos);
+						break;
+					}catch(e){
+						alert("Napacna poteza. Poskusi znova.");
+					}
+					posljiMatriko(matrika);
+					preveriZmagovalca(pos, i, barva);
+				}else if(i == 5){
+					barva = pobarvaj(6, pos);
+					posljiMatriko(matrika);
+					preveriZmagovalca(pos, i, barva);
+				}
+			}
+		}
+		
+		function pobarvaj(vrstica, stolpec){ //pozicija, pos
+			if(!naVrsti){
+				barva = "yellow";
+			}else{
+				barva = "red";
+			}
+			var pozicija = ".polje" + (vrstica-1);
+			matrika[vrstica-1][stolpec] = barva;
+			$(pozicija).find(":nth-child(" + (stolpec+1) + ")").addClass(barva);
+			naVrsti = !naVrsti;
+			return barva;
+		}
+      // function vstavi(mesto){
+      //   console.log(mesto);
+      // }
+      init();
+    </script>
+  </head>
+  <body>
+    <!-- 
+    <input type="text" id="ime" />
+    
+      <button
+      onClick="printMessage(document.querySelector('#ime').value);"
+      id="runButton"
+      disabled
+    >
+      Run
+    </button> 
+    -->
+
+    <table id="table">
+      <tr id="vstaviZeton">
+        <td class="vstavi" id="0"></td> 
+        <td class="vstavi" id="1"></td> 
+        <td class="vstavi" id="2"></td> 
+        <td class="vstavi" id="3"></td> 
+        <td class="vstavi" id="4"></td> 
+        <td class="vstavi" id="5"></td> 
+        <td class="vstavi" id="6"></td>
+      </tr>
+
+      <tr class="polje0">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+      <tr class="polje1">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+      <tr class="polje2">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+      <tr class="polje3">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+      <tr class="polje4">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+      <tr class="polje5">
+        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td>
+      </tr>
+    </table>
+
+  </body>
+</html>
